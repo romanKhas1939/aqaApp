@@ -164,3 +164,4 @@ client/test-results/
 
 .qodo/
 .aider*
+/build/
