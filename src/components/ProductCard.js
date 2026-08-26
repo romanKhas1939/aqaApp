@@ -6,7 +6,7 @@ export default function ProductCard({ product, addToCart }) {
     <Card>
       <ProductName>{product.name}</ProductName>
       <ProductPrice>${product.price}</ProductPrice>
-      <AddToCartButton onClick={() => addToCart(product)}>Add to Basket</AddToCartButton>
+      <AddToCartButton onClick={() => addToCart(product)}>Add to Cart</AddToCartButton>
     </Card>
   );
 }

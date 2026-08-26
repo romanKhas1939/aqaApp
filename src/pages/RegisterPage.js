@@ -38,18 +38,6 @@ export default function RegisterPage() {
       setErrorMessage("Password must be at least 6 characters long.");
       return false;
     }
-    if (!/^\d{5,10}$/.test(zip)) {
-      setErrorMessage("ZIP code must be between 5-10 digits.");
-      return false;
-    }
-    if (country === "Ukraine" && !/^\+380\d{9}$/.test(phone)) {
-      setErrorMessage("For Ukraine, phone number must start with +380 and have 12 digits.");
-      return false;
-    }
-    if (!/^\+\d{7,15}$/.test(phone)) {
-      setErrorMessage("Enter a valid phone number (e.g., +49123456789).");
-      return false;
-    }
     return true;
   };
 
@@ -103,7 +91,7 @@ export default function RegisterPage() {
           ))}
         </StyledSelect>
 
-        <StyledInput id="register-phone" type="text" placeholder={country === "Ukraine" ? "+380XXXXXXXXX" : "Phone (+49123456789)"} value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <StyledInput id="register-phone" type="text" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
         <StyledInput id="register-street" type="text" placeholder="Street and House Number" value={street} onChange={(e) => setStreet(e.target.value)} />
         <StyledInput id="register-zip" type="text" placeholder="ZIP Code" value={zip} onChange={(e) => setZip(e.target.value)} />
 

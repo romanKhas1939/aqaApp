@@ -31,7 +31,7 @@ export default function NavBarComponent() {
         Catalog
       </StyledNavLink>
       <StyledNavLink to="/cart" className={location.pathname === "/cart" ? "active" : ""}>
-        {loading ? "Basket (…)" : `Basket (${cartCount})`}
+        {loading ? "Cart (…)" : `Cart (${cartCount})`}
       </StyledNavLink>
       <StyledNavLink to={isAuthenticated ? "/account" : "/login"} className={location.pathname.includes("/account") || location.pathname.includes("/login") ? "active" : ""}>
         {isAuthenticated ? "My Account" : "Login"}
