@@ -8,6 +8,8 @@ export default function CartPage({ cart, setCart }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingProductId, setLoadingProductId] = useState(null);
+  const [pendingRemoval, setPendingRemoval] = useState(null); // товар, для якого відкрито модалку
+  const [removing, setRemoving] = useState(false);
 
   // ✅ Захист від `undefined`
   const safeCart = Array.isArray(cart) ? cart : [];
@@ -16,12 +18,14 @@ export default function CartPage({ cart, setCart }) {
     setLoading(true);
 
     setTimeout(() => {
-      localStorage.setItem("redirectAfterLogin", "/checkout");
       const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
       if (isAuthenticated) {
         navigate("/checkout");
       } else {
+        // Позначку ставимо лише коли справді відправляємо на логін — інакше вона
+        // лишалася б у сховищі назавжди й кидала на /checkout після будь-якого входу.
+        localStorage.setItem("redirectAfterLogin", "/checkout");
         alert("You need to log in to proceed to checkout.");
         navigate("/login");
       }
@@ -79,9 +83,20 @@ export default function CartPage({ cart, setCart }) {
     }, 1000); // Затримка 1 секунда перед зменшенням кількості
   };
 
-  const handleRemoveFromCart = (productId) => {
-    setLoading(true);
-    setLoadingProductId(productId);
+  // Видалення підтверджується в модалці: клік по "Remove from Cart" лише відкриває її.
+  const handleRemoveClick = (product) => {
+    setPendingRemoval(product);
+  };
+
+  const handleCancelRemoval = () => {
+    if (removing) return; // під час видалення закривати нічим
+    setPendingRemoval(null);
+  };
+
+  const handleConfirmRemoval = () => {
+    if (!pendingRemoval) return;
+    const productId = pendingRemoval.id;
+    setRemoving(true);
 
     setTimeout(() => {
       setCart((prevCart) => {
@@ -91,8 +106,8 @@ export default function CartPage({ cart, setCart }) {
         return updatedCart;
       });
 
-      setLoading(false);
-      setLoadingProductId(null);
+      setRemoving(false);
+      setPendingRemoval(null);
     }, 1500); // Затримка 1.5 секунди перед видаленням товару
   };
 
@@ -136,11 +151,11 @@ export default function CartPage({ cart, setCart }) {
                   </QuantityControls>
                   <Button
                     className="remove-from-cart"
-                    onClick={() => handleRemoveFromCart(product.id)}
+                    onClick={() => handleRemoveClick(product)}
                     id={`cart-item-remove-${product.id}`}
                     disabled={loading && loadingProductId === product.id}
                   >
-                    {loading && loadingProductId === product.id ? "Removing..." : "Remove from Cart"}
+                    Remove from Cart
                   </Button>
                 </ProductInfo>
               </ProductCard>
@@ -154,11 +169,115 @@ export default function CartPage({ cart, setCart }) {
           </TotalContainer>
         </>
       )}
+
+      {pendingRemoval && (
+        <ModalOverlay id="cart-remove-modal" onClick={handleCancelRemoval}>
+          <ModalBox
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cart-remove-modal-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="cart-remove-modal-title">Remove item?</h2>
+            <p id="cart-remove-modal-text">
+              Are you sure you want to remove <strong>{pendingRemoval.name}</strong> from your cart?
+            </p>
+            <ModalActions>
+              <CancelButton
+                id="cart-remove-cancel"
+                type="button"
+                onClick={handleCancelRemoval}
+                disabled={removing}
+              >
+                Cancel
+              </CancelButton>
+              <ConfirmButton
+                id="cart-remove-confirm"
+                type="button"
+                onClick={handleConfirmRemoval}
+                disabled={removing}
+              >
+                {removing ? "Removing..." : "Yes, remove"}
+              </ConfirmButton>
+            </ModalActions>
+          </ModalBox>
+        </ModalOverlay>
+      )}
     </Container>
   );
 }
 
 // ✅ **Стилі**
+const ModalOverlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+`;
+
+const ModalBox = styled.div`
+    background: white;
+    border-radius: 10px;
+    padding: 24px;
+    width: 400px;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+    h2 {
+        font-size: 20px;
+        margin: 0 0 12px;
+        color: #333;
+    }
+
+    p {
+        font-size: 15px;
+        color: #666;
+        margin: 0 0 20px;
+        line-height: 1.5;
+    }
+`;
+
+const ModalActions = styled.div`
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+`;
+
+const CancelButton = styled(Button)`
+    background: white;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
+
+const ConfirmButton = styled(Button)`
+    background: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
 const Container = styled.div`
     padding: 20px;
     max-width: 1200px;
