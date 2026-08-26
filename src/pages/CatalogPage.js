@@ -7,9 +7,9 @@ const products = [
   { id: 1, name: "Leather Wallet", price: 50, image: "/images/wallet.jpeg" },
   { id: 2, name: "Smartwatch", price: 380, image: "/images/watch.jpeg" },
   { id: 3, name: "Vintage Camera", price: 630, image: "/images/photograph.jpeg" },
-  { id: 4, name: "Glass", price: 90, image: "/images/glass.jpeg" },
+  { id: 4, name: "Sunglasses", price: 90, image: "/images/glass.jpeg" },
   { id: 5, name: "Tablet", price: 420, image: "/images/tablet.jpeg" },
-  { id: 6, name: "Coffee machine", price: 570, image: "/images/coffeMachine.jpeg" },
+  { id: 6, name: "Coffee Machine", price: 570, image: "/images/coffeMachine.jpeg" },
 ];
 
 export default function CatalogPage({ cart, setCart }) {
@@ -52,7 +52,7 @@ export default function CatalogPage({ cart, setCart }) {
           Catalog
         </StyledNavLink>
         <StyledNavLink to="/cart" className={location.pathname === "/cart" ? "active" : ""} id="nav-cart">
-          Basket (<span id="cart-count">{cart.length}</span>)
+          Cart (<span id="cart-count">{cart.length}</span>)
         </StyledNavLink>
         <StyledNavLink to={isAuthenticated ? "/account" : "/login"}
                        className={location.pathname === "/account" || location.pathname === "/login" ? "active" : ""}
@@ -85,7 +85,7 @@ export default function CatalogPage({ cart, setCart }) {
                 disabled={loading && loadingProductId === product.id}
               >
                 {loading && loadingProductId === product.id ? 'Processing...' :
-                  cart.some((item) => item.id === product.id) ? 'Remove from Basket' : 'Add to Basket'}
+                  cart.some((item) => item.id === product.id) ? 'Remove from Cart' : 'Add to Cart'}
               </Button>
             </ProductInfo>
           </ProductCard>

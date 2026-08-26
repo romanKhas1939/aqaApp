@@ -113,7 +113,7 @@ export default function AccountPage({ cartCount, setCartCount }) {
         <OrdersSection>
           <h2>📦 My Orders</h2>
           {orders.length === 0 ? (
-            <p>You have not made any orders yet.</p>
+            <p>You have not placed any orders yet.</p>
           ) : (
             orders.map((order, index) => (
               <OrderCard key={index} id={`account-order-${index}`}>

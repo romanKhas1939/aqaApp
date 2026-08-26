@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { seedDemoUser } from './demoUser';
+
+// Синхронно, до рендеру: LoginPage читає `users` під час рендеру,
+// тож ефект тут спрацював би запізно.
+seedDemoUser();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

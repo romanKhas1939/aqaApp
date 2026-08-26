@@ -22,7 +22,7 @@ export default function Header({ cartCount }) {
   return (
     <NavBar>
       <StyledLink to="/">Catalog</StyledLink>
-      <StyledLink to="/cart">Basket ({cartCount})</StyledLink>
+      <StyledLink to="/cart">Cart ({cartCount})</StyledLink>
       <StyledLink to="/login">My Account</StyledLink>
     </NavBar>
   );

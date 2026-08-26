@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { DEMO_USER } from "../demoUser";
 
 export default function LoginPage({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
@@ -11,16 +12,15 @@ export default function LoginPage({ setIsAuthenticated }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const users = JSON.parse(localStorage.getItem("users")) || [
-    { email: "test@example.com", password: "password123" }
-  ];
+  const users = JSON.parse(localStorage.getItem("users")) || [];
 
   const validateForm = () => {
     if (!email || !password) {
       setErrorMessage("All fields are required.");
       return false;
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    // Демо-логін `admin` навмисно не є email, тож для нього перевірку пропускаємо.
+    if (email !== DEMO_USER.email && !/\S+@\S+\.\S+/.test(email)) {
       setErrorMessage("Please enter a valid email address.");
       return false;
     }
@@ -61,8 +61,30 @@ export default function LoginPage({ setIsAuthenticated }) {
     navigate("/register");
   };
 
+  const handleFillDemo = () => {
+    setErrorMessage("");
+    setEmail(DEMO_USER.email);
+    setPassword(DEMO_USER.password);
+  };
+
   return (
     <Container>
+      <DemoHint id="login-demo-hint">
+        <h3>👋 Demo account</h3>
+        <p>No registration needed:</p>
+        <DemoRow>
+          <DemoLabel>Login</DemoLabel>
+          <DemoValue id="login-demo-email">{DEMO_USER.email}</DemoValue>
+        </DemoRow>
+        <DemoRow>
+          <DemoLabel>Password</DemoLabel>
+          <DemoValue id="login-demo-password">{DEMO_USER.password}</DemoValue>
+        </DemoRow>
+        <DemoFillButton id="login-demo-fill" type="button" onClick={handleFillDemo}>
+          Use demo account
+        </DemoFillButton>
+      </DemoHint>
+
       <LoginBox>
         <h2 id="login-title">🔑 Login to Your Account</h2>
 
@@ -88,6 +110,7 @@ export default function LoginPage({ setIsAuthenticated }) {
         </StyledButton>
         <RegisterButton id="login-register-button" onClick={handleRegisterRedirect}>Register</RegisterButton>
       </LoginBox>
+
       <Footer>
         This application was developed by Khas Roman as part of the "AQA for Beginners: Practical Testing with Playwright + JavaScript" course. All rights reserved. If you encounter this application outside the intended course context, it may have been shared without the author's consent. For any inquiries, please contact Khas Roman at <a href="mailto:romakhasss@gmail.com">romakhasss@gmail.com</a> or via <a href="https://www.linkedin.com/in/roman-khas-64b10b194" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
       </Footer>
@@ -101,8 +124,10 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
     background: #f3f4f6;
+    position: relative;
 `;
 
 const LoginBox = styled.div`
@@ -111,12 +136,100 @@ const LoginBox = styled.div`
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 350px;
+    /* 410px = попередні 350px вмісту + 2×30px падінгів: із border-box
+       ширина на десктопі лишається тією самою, але на вузькому екрані
+       коробка стискається замість того, щоб вилазити за край. */
+    box-sizing: border-box;
+    width: 410px;
+    max-width: 100%;
 
     h2 {
         font-size: 24px;
         margin-bottom: 20px;
         color: #333;
+    }
+`;
+
+// Абсолютне позиціонування — щоб підказка не зсувала форму з центра екрана.
+const DemoHint = styled.aside`
+    position: absolute;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 3px solid #22c55e;
+    box-sizing: border-box;
+    width: 235px;
+    max-width: 100%;
+    text-align: left;
+
+    h3 {
+        font-size: 15px;
+        margin: 0 0 6px;
+        color: #333;
+    }
+
+    p {
+        font-size: 12px;
+        color: #666;
+        margin: 0 0 12px;
+        line-height: 1.4;
+    }
+
+    /* Місця для колонки збоку вже немає — повертаємо підказку в потік над формою. */
+    @media (max-width: 1050px) {
+        position: static;
+        transform: none;
+        width: 410px;
+        margin-bottom: 20px;
+    }
+`;
+
+const DemoRow = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+`;
+
+const DemoLabel = styled.span`
+    font-size: 12px;
+    color: #666;
+`;
+
+// user-select: all — один клік виділяє значення цілком, щоб зручно копіювати.
+const DemoValue = styled.code`
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: bold;
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 4px;
+    padding: 3px 6px;
+    user-select: all;
+    cursor: text;
+`;
+
+const DemoFillButton = styled(Button)`
+    width: 100%;
+    background: white;
+    color: #22c55e;
+    border: 1px solid #22c55e;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        background: #22c55e;
+        color: white;
     }
 `;
 

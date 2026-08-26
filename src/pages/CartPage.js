@@ -103,11 +103,11 @@ export default function CartPage({ cart, setCart }) {
       <NavBarComponent cartCount={safeCart.length} />
 
       <Header>
-        <h1 id="cart-title">🛒 Your Shopping Basket</h1>
+        <h1 id="cart-title">🛒 Your Shopping Cart</h1>
       </Header>
 
       {safeCart.length === 0 ? (
-        <EmptyMessage id="cart-empty-message">Your basket is empty.</EmptyMessage>
+        <EmptyMessage id="cart-empty-message">Your cart is empty.</EmptyMessage>
       ) : (
         <>
           <ProductGrid>
@@ -140,7 +140,7 @@ export default function CartPage({ cart, setCart }) {
                     id={`cart-item-remove-${product.id}`}
                     disabled={loading && loadingProductId === product.id}
                   >
-                    {loading && loadingProductId === product.id ? "Removing..." : "Remove from Basket"}
+                    {loading && loadingProductId === product.id ? "Removing..." : "Remove from Cart"}
                   </Button>
                 </ProductInfo>
               </ProductCard>
