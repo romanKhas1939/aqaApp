@@ -29,7 +29,6 @@ export default function CheckoutPage({ setCartCount }) {
     }, 1000); // Затримка перед завантаженням товарів
   }, [navigate]);
 
-  const user = JSON.parse(localStorage.getItem("users"))?.[0] || {};
   const totalAmount = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
 
   const validatePayment = () => {
@@ -138,14 +137,6 @@ const CheckoutBox = styled.div`
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 400px;
-`;
-
-const InfoBox = styled.div`
-    text-align: left;
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
 `;
 
 const StyledInput = styled(Input)`
